@@ -2,8 +2,19 @@
 name = "ta-lib"
 version = "0.1.0"
 edition = "2021"
+authors = ["Moritz Moeller <virtualritz@protonmail.com>"]
+description = "High lebel Rust wrapper for TA-lib"
+keywords = ["ta-lib", "technical-analysis", "indicator", "trading", "financial-market"]
+categories = ["api-bindings"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://ta-lib.org/"
+repository = "https://github.com/virtualritz/ta-lib-rs/"
+documentation = "https://docs.rs/ta-lib-sys/"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[badges]
+travis-ci = { repository = "virtualritz/ta-lib-rs", branch = "master" }
+maintenance = { status = "actively-developed" }
 
 [dependencies]
 ta-lib-sys = { path = "../ta-lib-sys" }
