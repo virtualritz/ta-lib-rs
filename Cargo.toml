@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    'ta-lib-sys',
+    'ta-lib'
+]
+resolver = "2"
+
+[profile.dev]
+split-debuginfo = "unpacked"
