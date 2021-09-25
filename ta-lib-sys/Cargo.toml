@@ -18,4 +18,5 @@ maintenance = { status = "actively-developed" }
 [dependencies]
 
 [build-dependencies]
+# autotools = "0.2.3"
 bindgen = "0.59.1"

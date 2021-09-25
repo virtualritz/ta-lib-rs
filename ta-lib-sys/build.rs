@@ -6,12 +6,21 @@ fn main() {
     // Tell cargo to tell rustc to link the system ta_lib
     // shared library.
 
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    eprintln!("{}", out_dir.to_str().unwrap());
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+
+    /*
+    let ta_lib = autotools::build("ta-lib");
+
+    // Simply link the library without using pkg-config
+    println!("cargo:rustc-link-search=native={}", ta_lib.display());
+    println!("cargo:rustc-link-lib=static=ta-lib");
+
+    eprintln!("{}", ta_lib.display());
+    */
 
     Command::new("./configure")
         .current_dir("ta-lib")
-        .arg(format!("--prefix={}", out_dir.to_str().unwrap()))
+        .arg(format!("--prefix={}", out_path.display()))
         .output()
         .expect("Failed to execute TA C library configure script");
 
@@ -23,7 +32,7 @@ fn main() {
 
     println!(
         "cargo:rustc-link-search={}",
-        out_dir.join("lib").to_str().unwrap()
+        out_path.join("lib").display()
     );
     println!("cargo:rustc-link-lib=ta_lib");
 
@@ -34,7 +43,7 @@ fn main() {
         // The input header we would like to generate
         // bindings for.
         .header("wrapper.h")
-        .clang_arg(format!("-I{}", out_dir.join("include").to_str().unwrap()))
+        .clang_arg(format!("-I{}", out_path.join("include").display()))
         // Generate rustified enums
         .rustified_enum(".*")
         // Finish the builder and generate the bindings.
@@ -43,7 +52,6 @@ fn main() {
         .expect("Unable to generate bindings");
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");

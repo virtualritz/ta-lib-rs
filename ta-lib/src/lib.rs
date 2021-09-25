@@ -2,7 +2,7 @@ use std::mem::MaybeUninit;
 use ta_lib_sys::{TA_RetCode, TA_ATR, TA_OBV};
 
 #[derive(Debug, Clone)]
-struct Error(String);
+pub struct Error(String);
 
 /// Compute [ATR](http://www.tadoc.org/indicator/ATR.htm) over a period.
 ///
@@ -81,8 +81,8 @@ pub fn obv(real: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usize), Error> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn test() {
+        println!("{:?}", super::atr(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0], 2).unwrap().0);
+        println!("{:?}", super::obv(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0]).unwrap().0);
     }
 }
