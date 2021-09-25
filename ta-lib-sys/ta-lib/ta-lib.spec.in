@@ -10,7 +10,7 @@ TA-Lib provides common functions for the technical analysis of stock/future/comm
 
 %build
 ./autogen.sh
-CFLAGS="-g0 -O2 -pipe" ./configure --prefix=/usr
+CFLAGS="-g0 -O3 -pipe" ./configure --prefix=/usr
 make
 
 %install
