@@ -1,10 +1,9 @@
 # ta-lib-rust
-[![Build Status](https://travis-ci.org/CLevasseur/ta-lib-rust.svg?branch=master)](https://travis-ci.org/CLevasseur/ta-lib-rust)  
-
+[![Build Status](https://travis-ci.org/virtualritz/ta-lib-rs.svg?branch=master)](https://travis-ci.org/virtualritz/ta-lib-rs)
 TA-lib bindings for Rust
 
 TA-lib is a multi-platform library for market analysis. It includes 200 indicators such as ADX, MACD, RSI, Stochastic, Bollinger Bands, as well as Candlestick pattern recognition.
-    
+
 https://www.ta-lib.org/
 
 ## Installation
@@ -24,8 +23,8 @@ extern crate ta_lib_wrapper;
 
 ## Dependencies
 
-This wrapper requires that you have installed the TA-lib C library.  
-You can download it at https://www.ta-lib.org/hdr_dw.html.  
+This wrapper requires that you have installed the TA-lib C library.
+You can download it at https://www.ta-lib.org/hdr_dw.html.
 The instructions to install the library can be found at https://www.ta-lib.org/d_api/d_api.html and are summarized below.
 
 ##### Linux
@@ -65,7 +64,7 @@ and unzip to ``C:\ta-lib``
 
 ## Documentation
 
-The `examples` folder shows how to compute some common indicators using this library.  
+The `examples` folder shows how to compute some common indicators using this library.
 The full list of functions provided by these bindings can be obtained by building your project and open the file `target/*/build/ta-lib-wrapper-*/out/bindings.rs`
 
 ## Supported Indicators
@@ -89,7 +88,7 @@ CCI                 Commodity Channel Index
 CDL2CROWS           Two Crows
 CDL3BLACKCROWS      Three Black Crows
 CDL3INSIDE          Three Inside Up/Down
-CDL3LINESTRIKE      Three-Line Strike 
+CDL3LINESTRIKE      Three-Line Strike
 CDL3OUTSIDE         Three Outside Up/Down
 CDL3STARSINSOUTH    Three Stars In The South
 CDL3WHITESOLDIERS   Three Advancing White Soldiers

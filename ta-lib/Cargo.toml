@@ -16,5 +16,9 @@ documentation = "https://docs.rs/ta-lib-sys/"
 travis-ci = { repository = "virtualritz/ta-lib-rs", branch = "master" }
 maintenance = { status = "actively-developed" }
 
+[features]
+use_system_lib = ["ta-lib-sys/use_system_lib"]
+
 [dependencies]
+concat-idents = "1.1.3"
 ta-lib-sys = { path = "../ta-lib-sys" }
