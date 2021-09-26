@@ -60,7 +60,7 @@ define_high_low_close_period_fn!(
 );
 
 define_high_low_close_period_fn!(
-    /// Compute [Minus Directional Indicator](https://www.tadoc.org/indicator/PLUS_DI.htm) over a period (in days).
+    /// Compute [Plus Directional Indicator](https://www.tadoc.org/indicator/PLUS_DI.htm) over a period (in days).
     ///
     /// Returns a tuple containing the list of +DI values and the
     /// index of the first candle to have an associated +DI value.
@@ -135,7 +135,7 @@ fn test_obv() {
     );
 }
 
-/// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm). over a period (in days).
+/// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm) over a period (in days).
 ///
 /// Returns a tuple containing the list of SMA values and the index of the first
 /// close to have an associated SMA value.
