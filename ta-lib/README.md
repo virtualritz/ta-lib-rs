@@ -10,7 +10,7 @@ generation macros in the crate.
 
 The following indicators are currently wrapped:
 
-* ADX – Compute Average Directional (Movement).
+* ADX – Average Directional (Movement) Index.
 * ATR – Average True Range.
 * -DI – Minus Directional Indicator.
 * +DI – Plus Directional Indicator.
@@ -26,5 +26,5 @@ I sugget using the [`ta`](https://crates.io/crates/ta/) crate instead, which is
 a rewrite in Rust of *some* parts of TA but with better ergonomics than this
 crate here. But it also only implements parts of the original TA lib indicators.
 
-However, if you need to use an indicator missing from `ta` this crate
-may get you there quickly, as a workaround.
+I.e. if you need to use an indicator missing from `ta` this crate may get you
+there quickly as a workaround.
