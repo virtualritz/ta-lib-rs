@@ -16,11 +16,10 @@ fn main() {
             out_path.join("lib").display()
         );
 
-
+        /*
         let ta_lib = autotools::Config::new(TA_LIB_PATH)
-            .enamble_static()
+            .enable_static()
             .build();
-
 
         // Simply link the library without using pkg-config
         println!("cargo:rustc-link-search=native={}", ta_lib.display());
@@ -49,12 +48,10 @@ fn main() {
         .allowlist_type("TA_.*")
         .allowlist_var("TA_.*")
         .allowlist_var("TA_.*")
-        .rustified_enum(".*")
         .generate()
         .expect("Unable to generate bindings.");
 
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Could not write bindings.");
-
 }

@@ -89,6 +89,91 @@ define_values_period_fn!(
     TA_EMA
 );
 
+define_values_period_fn!(
+    /// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm) over a period (in days).
+    ///
+    /// Returns a tuple containing the list of SMA values and the
+    /// index of the first close to have an associated SMA value.
+    =>
+    simple_moving_average,
+    TA_SMA
+);
+
+pub enum MovingAverageType {
+    SimpleMovingAverage = ta::TA_MAType_TA_MAType_SMA as _,
+    ExponentialMovingAverage = ta::TA_MAType_TA_MAType_EMA as _,
+    WeightedMovingAverage = ta::TA_MAType_TA_MAType_WMA as _,
+    DoubleExponentialMovingAverage = ta::TA_MAType_TA_MAType_DEMA as _,
+    TripleExponentialMovingAverage = ta::TA_MAType_TA_MAType_TEMA as _,
+    TriangularMovingAverage = ta::TA_MAType_TA_MAType_TRIMA as _,
+    KaufmanAdaptiveMovingAverage = ta::TA_MAType_TA_MAType_KAMA as _,
+    MESAAdaptiveMovingAverage = ta::TA_MAType_TA_MAType_MAMA as _,
+    TripleGeneralizedDoubleExponentialMovingAverage = ta::TA_MAType_TA_MAType_T3 as _,
+}
+
+/// Compute [Bollinger Bands](https://www.tadoc.org/indicator/BBANDS.htm).
+///
+/// Returns a tuple containing the upper, middle and lower BBANDS values and the
+/// index of the first candle to have an associated BBANS value.
+pub fn bollinger_bands(
+    input: &[f64],
+    period: Option<usize>,
+    num_std_deviations_up: Option<f64>,
+    num_std_deviations_down: Option<f64>,
+    moving_average_type: Option<MovingAverageType>
+) -> Result<(Vec<f64>, Vec<f64>, Vec<f64>, usize), Error> {
+    assert!(!input.is_empty());
+
+    let mut out_begin = MaybeUninit::<i32>::uninit();
+    let mut out_size = MaybeUninit::<i32>::uninit();
+    let mut out_upper_band: Vec<f64> = Vec::with_capacity(input.len());
+    let mut out_middle_band: Vec<f64> = Vec::with_capacity(input.len());
+    let mut out_lower_band: Vec<f64> = Vec::with_capacity(input.len());
+
+    unsafe {
+        let ret_code = ta::TA_BBANDS(
+            0,
+            (input.len() - 1) as _,
+            input.as_ptr(),
+            if let Some(period) = period { period as _ } else { ta::TA_INTEGER_DEFAULT },
+            num_std_deviations_up.unwrap_or(0.0),
+            num_std_deviations_down.unwrap_or(0.0),
+            moving_average_type.unwrap_or(MovingAverageType::SimpleMovingAverage) as _,
+            out_begin.as_mut_ptr(),
+            out_size.as_mut_ptr(),
+            out_upper_band.as_mut_ptr(),
+            out_middle_band.as_mut_ptr(),
+            out_lower_band.as_mut_ptr(),
+        );
+
+        match ret_code {
+            ta::TA_RetCode_TA_SUCCESS => {
+                out_upper_band.set_len(out_size.assume_init() as _);
+                out_middle_band.set_len(out_size.assume_init() as _);
+                out_lower_band.set_len(out_size.assume_init() as _);
+
+                Ok((out_upper_band, out_middle_band, out_lower_band, out_begin.assume_init() as _,))
+            }
+            _ => Err(Error(format!(
+                "Could not compute OBV; error: {:?}",
+                ret_code
+            ))),
+        }
+    }
+}
+
+/*
+#[test]
+fn test_obv() {
+    println!(
+        "{:?}",
+        on_balance_volume(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0])
+            .unwrap()
+            .0
+    );
+}*/
+
+
 /// Compute [On Balance Volume](https://www.tadoc.org/indicator/OBV.htm).
 ///
 /// Returns a tuple containing the list of OBV values and the
@@ -113,7 +198,7 @@ pub fn on_balance_volume(real: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usiz
         );
 
         match ret_code {
-            ta::TA_RetCode::TA_SUCCESS => {
+            ta::TA_RetCode_TA_SUCCESS => {
                 out.set_len(out_size.assume_init() as _);
                 Ok((out, out_begin.assume_init() as _))
             }
@@ -135,48 +220,7 @@ fn test_obv() {
     );
 }
 
-/// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm) over a period (in days).
-///
-/// Returns a tuple containing the list of SMA values and the index of the first
-/// close to have an associated SMA value.
-pub fn simple_moving_average(
-    close_prices: &[f64],
-    period: Option<usize>,
-) -> Result<(Vec<f64>, usize), Error> {
-    assert!(!close_prices.is_empty());
 
-    let mut out: Vec<f64> = Vec::with_capacity(close_prices.len());
-    let mut out_begin = MaybeUninit::<i32>::uninit();
-    let mut out_size = MaybeUninit::<i32>::uninit();
-
-    unsafe {
-        let ret_code = ta::TA_MA(
-            0,
-            (close_prices.len() - 1) as _,
-            close_prices.as_ptr(),
-            if let Some(period) = period {
-                period as _
-            } else {
-                ta::TA_INTEGER_DEFAULT
-            },
-            ta::TA_MAType::TA_MAType_SMA,
-            out_begin.as_mut_ptr(),
-            out_size.as_mut_ptr(),
-            out.as_mut_ptr(),
-        );
-
-        match ret_code {
-            ta::TA_RetCode::TA_SUCCESS => {
-                out.set_len(out_size.assume_init() as _);
-                Ok((out, out_begin.assume_init() as _))
-            }
-            _ => Err(Error(format!(
-                "Could not compute SMA; error: {:?}",
-                ret_code
-            ))),
-        }
-    }
-}
 
 #[test]
 fn test_sma() {

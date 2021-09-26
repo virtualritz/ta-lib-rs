@@ -22,14 +22,18 @@ macro_rules! define_high_low_close_period_fn {
                     high.as_ptr(),
                     low.as_ptr(),
                     close.as_ptr(),
-                    if let Some(period) = period { period as _ } else { ta::TA_INTEGER_DEFAULT },
+                    if let Some(period) = period {
+                        period as _
+                    } else {
+                        ta::TA_INTEGER_DEFAULT
+                    },
                     out_begin.as_mut_ptr(),
                     out_size.as_mut_ptr(),
                     out.as_mut_ptr(),
                 );
 
                 match ret_code {
-                    ta::TA_RetCode::TA_SUCCESS => {
+                    ta::TA_RetCode_TA_SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }
@@ -100,7 +104,7 @@ macro_rules! define_high_low_close_fn {
                 );
 
                 match ret_code {
-                    ta::TA_RetCode::TA_SUCCESS => {
+                    ta::TA_RetCode_TA_SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }
@@ -146,28 +150,32 @@ macro_rules! define_values_period_fn {
     ($(#[$attr:meta])* => $fn_name:ident, $ta_fn_name:ident) => {
         $(#[$attr])*
         pub fn $fn_name(
-            real: &[f64],
+            input: &[f64],
             period: Option<usize>,
         ) -> Result<(Vec<f64>, usize), Error> {
-            assert!(!real.is_empty());
+            assert!(!input.is_empty());
 
-            let mut out: Vec<f64> = Vec::with_capacity(real.len());
+            let mut out: Vec<f64> = Vec::with_capacity(input.len());
             let mut out_begin = MaybeUninit::<i32>::uninit();
             let mut out_size = MaybeUninit::<i32>::uninit();
 
             unsafe {
                 let ret_code = ta::$ta_fn_name(
                     0,
-                    (real.len() - 1) as _,
-                    real.as_ptr(),
-                    if let Some(period) = period { period as _ } else { ta::TA_INTEGER_DEFAULT },
+                    (input.len() - 1) as _,
+                    input.as_ptr(),
+                    if let Some(period) = period {
+                        period as _
+                    } else {
+                        ta::TA_INTEGER_DEFAULT
+                    },
                     out_begin.as_mut_ptr(),
                     out_size.as_mut_ptr(),
                     out.as_mut_ptr(),
                 );
 
                 match ret_code {
-                    ta::TA_RetCode::TA_SUCCESS => {
+                    ta::TA_RetCode_TA_SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }

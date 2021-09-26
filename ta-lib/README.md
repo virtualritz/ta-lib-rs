@@ -12,6 +12,7 @@ The following indicators are currently wrapped:
 
 * ADX – Average Directional (Movement) Index.
 * ATR – Average True Range.
+* BBANDS – Bollinger Bands.
 * -DI – Minus Directional Indicator.
 * +DI – Plus Directional Indicator.
 * EMA – Exponential Moving Average.
