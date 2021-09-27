@@ -19,6 +19,7 @@ fn main() {
         /*
         let ta_lib = autotools::Config::new(TA_LIB_PATH)
             .enable_static()
+            .insource(true)
             .build();
 
         // Simply link the library without using pkg-config

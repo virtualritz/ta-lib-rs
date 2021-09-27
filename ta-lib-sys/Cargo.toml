@@ -11,10 +11,6 @@ homepage = "https://ta-lib.org/"
 repository = "https://github.com/virtualritz/ta-lib-rs/"
 documentation = "https://docs.rs/ta-lib-sys/"
 
-[badges]
-travis-ci = { repository = "virtualritz/ta-lib-rs", branch = "master" }
-maintenance = { status = "actively-developed" }
-
 [features]
 use_system_lib = []
 
