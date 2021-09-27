@@ -12,13 +12,9 @@ homepage = "https://ta-lib.org/"
 repository = "https://github.com/virtualritz/ta-lib-rs/"
 documentation = "https://docs.rs/ta-lib/"
 
-[badges]
-travis-ci = { repository = "virtualritz/ta-lib-rs", branch = "master" }
-maintenance = { status = "actively-developed" }
-
 [features]
 use_system_lib = ["ta-lib-sys/use_system_lib"]
 
 [dependencies]
 concat-idents = "1.1.3"
-ta-lib-sys = { path = "../ta-lib-sys" }
+ta-lib-sys = "0.1.0"
