@@ -20,7 +20,7 @@ mod macros;
 pub struct Error(String);
 
 define_high_low_close_period_fn!(
-    /// Compute [Average Directional (Movement) Index](https://www.tadoc.org/indicator/ADX.htm) over a period (in days).
+    /// Compute [Average Directional (Movement) Index](https://www.tadoc.org/indicator/ADX.htm) over a period.
     ///
     /// Returns a tuple containing the list of ADX values and the
     /// index of the first candle to have an associated ADX value.
@@ -30,7 +30,7 @@ define_high_low_close_period_fn!(
 );
 
 define_high_low_close_period_fn!(
-    /// Compute [Average True Range](https://www.tadoc.org/indicator/ATR.htm) over a period (in days).
+    /// Compute [Average True Range](https://www.tadoc.org/indicator/ATR.htm) over a period.
     ///
     /// Returns a tuple containing the list of ATR values and the
     /// index of the first candle to have an associated ATR value.
@@ -40,7 +40,7 @@ define_high_low_close_period_fn!(
 );
 
 define_high_low_close_period_fn!(
-    /// Compute [Normalized Average True Range](https://www.tadoc.org/indicator/NATR.htm) over a period (in days).
+    /// Compute [Normalized Average True Range](https://www.tadoc.org/indicator/NATR.htm) over a period.
     ///
     /// Returns a tuple containing the list of NATR values and the
     /// index of the first candle to have an associated NATR value.
@@ -50,27 +50,27 @@ define_high_low_close_period_fn!(
 );
 
 define_high_low_close_period_fn!(
-    /// Compute [Minus Directional Indicator](https://www.tadoc.org/indicator/MINUS_DI.htm) over a period (in days).
+    /// Compute [Negative Directional Indicator](https://www.tadoc.org/indicator/MINUS_DI.htm) over a period.
     ///
     /// Returns a tuple containing the list of -DI values and the
     /// index of the first candle to have an associated -DI value.
     =>
-    minus_directional_indicator,
+    negative_directional_indicator,
     TA_MINUS_DI
 );
 
 define_high_low_close_period_fn!(
-    /// Compute [Plus Directional Indicator](https://www.tadoc.org/indicator/PLUS_DI.htm) over a period (in days).
+    /// Compute [Positive Directional Indicator](https://www.tadoc.org/indicator/PLUS_DI.htm) over a period.
     ///
     /// Returns a tuple containing the list of +DI values and the
     /// index of the first candle to have an associated +DI value.
     =>
-    plus_directional_indicator,
+    positive_directional_indicator,
     TA_PLUS_DI
 );
 
 define_high_low_close_fn!(
-    /// Compute [True Range](https://www.tadoc.org/indicator/TRANGE.htm) over a period (in days).
+    /// Compute [True Range](https://www.tadoc.org/indicator/TRANGE.htm) over a period.
     ///
     /// Returns a tuple containing the list of TRANGE values and the
     /// index of the first candle to have an associated TRANGE value.
@@ -80,7 +80,7 @@ define_high_low_close_fn!(
 );
 
 define_values_period_fn!(
-    /// Compute [Exponential Moving Average](https://www.tadoc.org/indicator/EMA.htm) over a period (in days).
+    /// Compute [Exponential Moving Average](https://www.tadoc.org/indicator/EMA.htm) over a period.
     ///
     /// Returns a tuple containing the list of EMA values and the
     /// index of the first candle to have an associated EMA value.
@@ -90,7 +90,7 @@ define_values_period_fn!(
 );
 
 define_values_period_fn!(
-    /// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm) over a period (in days).
+    /// Compute [Simple Moving Average](https://www.tadoc.org/indicator/SMA.htm) over a period.
     ///
     /// Returns a tuple containing the list of SMA values and the
     /// index of the first close to have an associated SMA value.
@@ -178,19 +178,19 @@ fn test_obv() {
 ///
 /// Returns a tuple containing the list of OBV values and the
 /// index of the first candle to have an associated OBV value.
-pub fn on_balance_volume(real: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usize), Error> {
-    assert!(!real.is_empty());
-    assert!(real.len() <= volume.len());
+pub fn on_balance_volume(close: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usize), Error> {
+    assert!(!close.is_empty());
+    assert!(close.len() <= volume.len());
 
-    let mut out: Vec<f64> = Vec::with_capacity(real.len());
+    let mut out: Vec<f64> = Vec::with_capacity(close.len());
     let mut out_begin = MaybeUninit::<i32>::uninit();
     let mut out_size = MaybeUninit::<i32>::uninit();
 
     unsafe {
         let ret_code = ta::TA_OBV(
             0,
-            (real.len() - 1) as _,
-            real.as_ptr(),
+            (close.len() - 1) as _,
+            close.as_ptr(),
             volume.as_ptr(),
             out_begin.as_mut_ptr(),
             out_size.as_mut_ptr(),
@@ -211,16 +211,13 @@ pub fn on_balance_volume(real: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usiz
 }
 
 #[test]
-fn test_obv() {
+fn test_on_balance_volume() {
     println!(
         "{:?}",
         on_balance_volume(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0])
             .unwrap()
-            .0
     );
 }
-
-
 
 #[test]
 fn test_sma() {

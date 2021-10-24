@@ -48,7 +48,6 @@ fn main() {
         .allowlist_function("TA_.*")
         .allowlist_type("TA_.*")
         .allowlist_var("TA_.*")
-        .allowlist_var("TA_.*")
         .generate()
         .expect("Unable to generate bindings.");
 
