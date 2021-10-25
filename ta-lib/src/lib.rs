@@ -7,8 +7,8 @@
 //! * `use_system_lib` – Use the system's installed C TA lib instead of building
 //!   from source.
 //!
-//!   By deafult the C TA lib is built from source included with the `ta-lib-sys`
-//!   crate.
+//!   By deafult the C TA lib is built from source included with the
+//! `ta-lib-sys`   crate.
 use concat_idents::concat_idents;
 use std::mem::MaybeUninit;
 use ta_lib_sys as ta;
@@ -120,7 +120,7 @@ pub fn bollinger_bands(
     period: Option<usize>,
     num_std_deviations_up: Option<f64>,
     num_std_deviations_down: Option<f64>,
-    moving_average_type: Option<MovingAverageType>
+    moving_average_type: Option<MovingAverageType>,
 ) -> Result<(Vec<f64>, Vec<f64>, Vec<f64>, usize), Error> {
     assert!(!input.is_empty());
 
@@ -135,7 +135,12 @@ pub fn bollinger_bands(
             0,
             (input.len() - 1) as _,
             input.as_ptr(),
-            if let Some(period) = period { period as _ } else { ta::TA_INTEGER_DEFAULT },
+            if let Some(period) = period {
+                period as _
+            } else {
+                // ta::TA_INTEGER_DEFAULT
+                i32::MIN
+            },
             num_std_deviations_up.unwrap_or(ta::TA_REAL_DEFAULT),
             num_std_deviations_down.unwrap_or(ta::TA_REAL_DEFAULT),
             moving_average_type.unwrap_or(MovingAverageType::ExponentialMovingAverage) as _,
@@ -152,7 +157,12 @@ pub fn bollinger_bands(
                 out_middle_band.set_len(out_size.assume_init() as _);
                 out_lower_band.set_len(out_size.assume_init() as _);
 
-                Ok((out_upper_band, out_middle_band, out_lower_band, out_begin.assume_init() as _,))
+                Ok((
+                    out_upper_band,
+                    out_middle_band,
+                    out_lower_band,
+                    out_begin.assume_init() as _,
+                ))
             }
             _ => Err(Error(format!(
                 "Could not compute OBV; error: {:?}",
@@ -172,7 +182,6 @@ fn test_obv() {
             .0
     );
 }*/
-
 
 /// Compute [On Balance Volume](https://www.tadoc.org/indicator/OBV.htm).
 ///
@@ -214,8 +223,7 @@ pub fn on_balance_volume(close: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usi
 fn test_on_balance_volume() {
     println!(
         "{:?}",
-        on_balance_volume(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0])
-            .unwrap()
+        on_balance_volume(&[1.0, 2.0, 3.0, 4.0], &[1.0, 2.0, 3.0, 4.0]).unwrap()
     );
 }
 

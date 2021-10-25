@@ -25,7 +25,8 @@ macro_rules! define_high_low_close_period_fn {
                     if let Some(period) = period {
                         period as _
                     } else {
-                        ta::TA_INTEGER_DEFAULT
+                        // ta::TA_INTEGER_DEFAULT
+                        i32::MIN
                     },
                     out_begin.as_mut_ptr(),
                     out_size.as_mut_ptr(),
@@ -167,7 +168,8 @@ macro_rules! define_values_period_fn {
                     if let Some(period) = period {
                         period as _
                     } else {
-                        ta::TA_INTEGER_DEFAULT
+                        // ta::TA_INTEGER_DEFAULT
+                        i32::MIN
                     },
                     out_begin.as_mut_ptr(),
                     out_size.as_mut_ptr(),

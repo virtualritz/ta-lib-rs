@@ -10,7 +10,6 @@ fn main() {
     println!("cargo:rustc-link-lib=static=ta_lib");
 
     if !cfg!(feature = "use_system_lib") {
-
         println!(
             "cargo:rustc-link-search=native={}",
             out_path.join("lib").display()
