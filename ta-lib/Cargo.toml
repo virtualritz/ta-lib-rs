@@ -1,6 +1,6 @@
 [package]
 name = "ta-lib"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Moritz Moeller <virtualritz@protonmail.com>"]
 description = "High level Rust wrapper for TA-lib"
