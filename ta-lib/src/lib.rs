@@ -1,20 +1,40 @@
 //#![warn(missing_docs)]
-//! The Technical Analysis library includes 200 financial indicators such as
+//! High level, safe wrapper around the [Technical Analysis
+//! library](https://ta-lib.org/).
+//!
+//! This library includes 200 financial indicators such as
 //! [`ADX`](average_directional_movement_index), MACD, RSI, Stochastic,
 //! Bollinger Bands, as well as Candlestick pattern recognition.
 //!
+//! ## EXample
+//!
+//! ```
+//! use ta_lib::simple_moving_average;
+//!
+//! let close_prices = [
+//!     1.087010, 1.087120, 1.087080, 1.087170, 1.087110, 1.087010, 1.087100, 1.087120, 1.087110,
+//!     1.087080, 1.087000, 1.086630, 1.086630, 1.086610, 1.086630, 1.086640, 1.086650, 1.086650,
+//!     1.086670, 1.086630,
+//! ];
+//!
+//! let period = 10;
+//!
+//! let (sma_values, begin) = simple_moving_average(&close_prices, Some(period)).unwrap();
+//! ```
+//!
 //! ## Cargo Features
-//! * `use_system_lib` – Use the system's installed C TA lib instead of building
+//! * `use_system_lib` – Use the system's installed TA lib instead of building
 //!   from source.
 //!
-//!   By deafult the C TA lib is built from source included with the
-//! `ta-lib-sys`   crate.
+//! By deafult the wrapped TA lib is built from source included with the
+//! `ta-lib-sys` crate.
+
 use concat_idents::concat_idents;
-use std::mem::MaybeUninit;
+use std::mem::{transmute, MaybeUninit};
 use ta_lib_sys as ta;
 
-#[macro_use]
 mod macros;
+use macros::*;
 
 #[derive(Debug, Clone)]
 pub struct Error(String);
@@ -26,7 +46,7 @@ define_high_low_close_period_fn!(
     /// index of the first candle to have an associated ADX value.
     =>
     average_directional_movement_index,
-    TA_ADX
+    ADX
 );
 
 define_high_low_close_period_fn!(
@@ -36,7 +56,7 @@ define_high_low_close_period_fn!(
     /// index of the first candle to have an associated ATR value.
     =>
     average_true_range,
-    TA_ATR
+    ATR
 );
 
 define_high_low_close_period_fn!(
@@ -46,7 +66,7 @@ define_high_low_close_period_fn!(
     /// index of the first candle to have an associated NATR value.
     =>
     normalized_average_true_range,
-    TA_NATR
+    NATR
 );
 
 define_high_low_close_period_fn!(
@@ -56,7 +76,7 @@ define_high_low_close_period_fn!(
     /// index of the first candle to have an associated -DI value.
     =>
     negative_directional_indicator,
-    TA_MINUS_DI
+    MINUS_DI
 );
 
 define_high_low_close_period_fn!(
@@ -66,7 +86,7 @@ define_high_low_close_period_fn!(
     /// index of the first candle to have an associated +DI value.
     =>
     positive_directional_indicator,
-    TA_PLUS_DI
+    PLUS_DI
 );
 
 define_high_low_close_fn!(
@@ -76,7 +96,7 @@ define_high_low_close_fn!(
     /// index of the first candle to have an associated TRANGE value.
     =>
     true_range,
-    TA_TRANGE
+    TRANGE
 );
 
 define_values_period_fn!(
@@ -86,7 +106,7 @@ define_values_period_fn!(
     /// index of the first candle to have an associated EMA value.
     =>
     exponential_moving_average,
-    TA_EMA
+    EMA
 );
 
 define_values_period_fn!(
@@ -96,19 +116,20 @@ define_values_period_fn!(
     /// index of the first close to have an associated SMA value.
     =>
     simple_moving_average,
-    TA_SMA
+    SMA
 );
 
+#[repr(C)]
 pub enum MovingAverageType {
-    SimpleMovingAverage = ta::TA_MAType_TA_MAType_SMA as _,
-    ExponentialMovingAverage = ta::TA_MAType_TA_MAType_EMA as _,
-    WeightedMovingAverage = ta::TA_MAType_TA_MAType_WMA as _,
-    DoubleExponentialMovingAverage = ta::TA_MAType_TA_MAType_DEMA as _,
-    TripleExponentialMovingAverage = ta::TA_MAType_TA_MAType_TEMA as _,
-    TriangularMovingAverage = ta::TA_MAType_TA_MAType_TRIMA as _,
-    KaufmanAdaptiveMovingAverage = ta::TA_MAType_TA_MAType_KAMA as _,
-    MESAAdaptiveMovingAverage = ta::TA_MAType_TA_MAType_MAMA as _,
-    TripleGeneralizedDoubleExponentialMovingAverage = ta::TA_MAType_TA_MAType_T3 as _,
+    SimpleMovingAverage = ta::MAType::MAType_SMA as _,
+    ExponentialMovingAverage = ta::MAType::MAType_EMA as _,
+    WeightedMovingAverage = ta::MAType::MAType_WMA as _,
+    DoubleExponentialMovingAverage = ta::MAType::MAType_DEMA as _,
+    TripleExponentialMovingAverage = ta::MAType::MAType_TEMA as _,
+    TriangularMovingAverage = ta::MAType::MAType_TRIMA as _,
+    KaufmanAdaptiveMovingAverage = ta::MAType::MAType_KAMA as _,
+    MesaAdaptiveMovingAverage = ta::MAType::MAType_MAMA as _,
+    TripleGeneralizedDoubleExponentialMovingAverage = ta::MAType::MAType_T3 as _,
 }
 
 /// Compute [Bollinger Bands](https://www.tadoc.org/indicator/BBANDS.htm).
@@ -131,19 +152,19 @@ pub fn bollinger_bands(
     let mut out_lower_band: Vec<f64> = Vec::with_capacity(input.len());
 
     unsafe {
-        let ret_code = ta::TA_BBANDS(
+        let ret_code = ta::BBANDS(
             0,
             (input.len() - 1) as _,
             input.as_ptr(),
             if let Some(period) = period {
                 period as _
             } else {
-                // ta::TA_INTEGER_DEFAULT
+                // ta::INTEGER_DEFAULT
                 i32::MIN
             },
-            num_std_deviations_up.unwrap_or(ta::TA_REAL_DEFAULT),
-            num_std_deviations_down.unwrap_or(ta::TA_REAL_DEFAULT),
-            moving_average_type.unwrap_or(MovingAverageType::ExponentialMovingAverage) as _,
+            num_std_deviations_up.unwrap_or(ta::REAL_DEFAULT),
+            num_std_deviations_down.unwrap_or(ta::REAL_DEFAULT),
+            transmute(moving_average_type.unwrap_or(MovingAverageType::ExponentialMovingAverage)),
             out_begin.as_mut_ptr(),
             out_size.as_mut_ptr(),
             out_upper_band.as_mut_ptr(),
@@ -152,7 +173,7 @@ pub fn bollinger_bands(
         );
 
         match ret_code {
-            ta::TA_RetCode_TA_SUCCESS => {
+            ta::RetCode::SUCCESS => {
                 out_upper_band.set_len(out_size.assume_init() as _);
                 out_middle_band.set_len(out_size.assume_init() as _);
                 out_lower_band.set_len(out_size.assume_init() as _);
@@ -196,7 +217,7 @@ pub fn on_balance_volume(close: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usi
     let mut out_size = MaybeUninit::<i32>::uninit();
 
     unsafe {
-        let ret_code = ta::TA_OBV(
+        let ret_code = ta::OBV(
             0,
             (close.len() - 1) as _,
             close.as_ptr(),
@@ -207,7 +228,7 @@ pub fn on_balance_volume(close: &[f64], volume: &[f64]) -> Result<(Vec<f64>, usi
         );
 
         match ret_code {
-            ta::TA_RetCode_TA_SUCCESS => {
+            ta::RetCode::SUCCESS => {
                 out.set_len(out_size.assume_init() as _);
                 Ok((out, out_begin.assume_init() as _))
             }
@@ -235,9 +256,9 @@ fn test_sma() {
         1.086670, 1.086630,
     ];
 
-    // compute sma, since we use a period of 10, the first 10 closes won't have
+    // Compute SMA, since we use a period of 10, the first 10 closes won't have
     // an sma value because there is not enough data, so begin will be set to
-    // the index 29
+    // the index 20.
     let (sma_values, begin) = simple_moving_average(&close_prices, Some(10)).unwrap();
 
     // print values

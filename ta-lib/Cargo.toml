@@ -1,6 +1,6 @@
 [package]
 name = "ta-lib"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Moritz Moeller <virtualritz@protonmail.com>"]
 description = "High level Rust wrapper for TA-lib"
@@ -16,5 +16,5 @@ documentation = "https://docs.rs/ta-lib/"
 use_system_lib = ["ta-lib-sys/use_system_lib"]
 
 [dependencies]
-concat-idents = "1.1.3"
-ta-lib-sys = "0.1.1"
+concat-idents = "1.1.4"
+ta-lib-sys = "0.1.2"

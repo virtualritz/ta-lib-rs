@@ -25,7 +25,7 @@ macro_rules! define_high_low_close_period_fn {
                     if let Some(period) = period {
                         period as _
                     } else {
-                        // ta::TA_INTEGER_DEFAULT
+                        // ta::INTEGER_DEFAULT
                         i32::MIN
                     },
                     out_begin.as_mut_ptr(),
@@ -34,7 +34,7 @@ macro_rules! define_high_low_close_period_fn {
                 );
 
                 match ret_code {
-                    ta::TA_RetCode_TA_SUCCESS => {
+                    ta::RetCode::SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }
@@ -76,6 +76,8 @@ macro_rules! define_high_low_close_period_fn {
     };
 }
 
+pub(crate) use define_high_low_close_period_fn;
+
 macro_rules! define_high_low_close_fn {
     ($(#[$attr:meta])* => $fn_name:ident, $ta_fn_name:ident) => {
         $(#[$attr])*
@@ -105,7 +107,7 @@ macro_rules! define_high_low_close_fn {
                 );
 
                 match ret_code {
-                    ta::TA_RetCode_TA_SUCCESS => {
+                    ta::RetCode::SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }
@@ -147,6 +149,8 @@ macro_rules! define_high_low_close_fn {
     };
 }
 
+pub(crate) use define_high_low_close_fn;
+
 macro_rules! define_values_period_fn {
     ($(#[$attr:meta])* => $fn_name:ident, $ta_fn_name:ident) => {
         $(#[$attr])*
@@ -168,7 +172,7 @@ macro_rules! define_values_period_fn {
                     if let Some(period) = period {
                         period as _
                     } else {
-                        // ta::TA_INTEGER_DEFAULT
+                        // ta::INTEGER_DEFAULT
                         i32::MIN
                     },
                     out_begin.as_mut_ptr(),
@@ -177,7 +181,7 @@ macro_rules! define_values_period_fn {
                 );
 
                 match ret_code {
-                    ta::TA_RetCode_TA_SUCCESS => {
+                    ta::RetCode::SUCCESS => {
                         out.set_len(out_size.assume_init() as _);
                         Ok((out, out_begin.assume_init() as _))
                     }
@@ -211,3 +215,5 @@ macro_rules! define_values_period_fn {
         });
     };
 }
+
+pub(crate) use define_values_period_fn;
